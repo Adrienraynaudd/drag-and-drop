@@ -29,14 +29,35 @@ namespace drag_and_drop
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
+
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                
                 // Package the data.
                 DataObject data = new DataObject();
                 data.SetData(DataFormats.StringFormat, circleUI.Fill.ToString());
                 data.SetData("Double", circleUI.Height);
                 data.SetData("Object", this);
+                data.SetData("OriginParent", this.Parent);
+
+
+                if (this.Parent is StackPanel parent)
+				{
+                    // Position de l'objet et de la fenêtre
+					Point objPos = PointToScreen(new Point(0, 0));
+					Point winPos = MainWindow.Ref.PointToScreen(new Point(0, 0));
+
+					// Position relative obj / fenêtre
+					double relX = objPos.X - winPos.X;
+					double relY = objPos.Y - winPos.Y;
+
+                    // remove l'enfant du Stackpanel parent, ajout dans la grid DNDContainer
+					parent.Children.Remove(this);
+                    MainWindow.Ref.DNDContainer.Children.Add(this);
+
+                    // utilisation de la marge pour positionner l'object exactement là où il était à l'origine
+                    this.Margin = new Thickness(relY, relX, 0, 0);
+				}
+                
 
                 // Initiate the drag-and-drop operation.
                 DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
@@ -63,7 +84,5 @@ namespace drag_and_drop
             
             e.Handled = true;
         }
-
-
     }
 }

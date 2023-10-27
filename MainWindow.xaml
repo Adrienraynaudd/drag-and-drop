@@ -23,7 +23,11 @@
             Background="Bisque"
             AllowDrop="True"
             Drop="Panel_Drop">
-        </StackPanel>
-    </Grid>
+		</StackPanel>
 
+		<!-- cette Grid occupe toute la surface de l'écran (Background="Red") -->
+		<Grid x:Name="DNDContainer" Grid.ColumnSpan="2">
+			
+		</Grid>
+	</Grid>
 </Window>

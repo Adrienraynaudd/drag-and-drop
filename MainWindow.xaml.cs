@@ -10,6 +10,8 @@ namespace drag_and_drop
 
     public partial class MainWindow : Window
     {
+        public static MainWindow Ref;
+
         private Point initialMousePosition;
         private Point initialElementPosition;
         private UIElement selected;
@@ -17,6 +19,8 @@ namespace drag_and_drop
         public MainWindow()
         {
             InitializeComponent();
+
+            Ref = this;
         }
 
         private void Panel_MouseMove(object sender, MouseEventArgs e)
