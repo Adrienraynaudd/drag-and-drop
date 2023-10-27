@@ -7,9 +7,12 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace drag_and_drop
 {
+
     public partial class MainWindow : Window
     {
-       
+        private Point initialMousePosition;
+        private Point initialElementPosition;
+        private UIElement selected;
 
         public MainWindow()
         {
@@ -21,19 +24,34 @@ namespace drag_and_drop
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 // Initiate the drag-and-drop operation.
-                DragDrop.DoDragDrop(circleUI, circleUI, DragDropEffects.Move);
+                selected = (UIElement)sender;
+
+                DragDrop.DoDragDrop(selected, selected, DragDropEffects.Move);
             }
         }
         private void Panel_Drop(object sender, DragEventArgs e)
         {
-            
+            initialMousePosition = default(Point);
+            initialElementPosition = default(Point);
 
         }
         private void Panel_DragOver(object sender, DragEventArgs e)
         {
-            Point mousePosition = e.GetPosition(gride);
-            Canvas.SetLeft(circleUI, mousePosition.X);
-            Canvas.SetTop(circleUI, mousePosition.Y);
+            if (initialMousePosition == default(Point))
+            {
+
+                initialMousePosition = e.GetPosition(gride);
+                initialElementPosition = new Point(Canvas.GetLeft(selected), Canvas.GetTop(selected));
+            }
+            else
+            {
+                Point currentMousePosition = e.GetPosition(gride);
+                double deltaX = currentMousePosition.X - initialMousePosition.X;
+                double deltaY = currentMousePosition.Y - initialMousePosition.Y;
+
+                Canvas.SetLeft(selected, initialElementPosition.X + deltaX);
+                Canvas.SetTop(selected, initialElementPosition.Y + deltaY);
+            }
         }
 
 
