@@ -23,10 +23,22 @@ namespace drag_and_drop
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                // Initiate the drag-and-drop operation.
+               
                 selected = (UIElement)sender;
-                gride.Children.Remove(selected);
-                Canvass.Children.Add(selected);
+                if (!Canvass.Children.Contains(selected))
+                {
+                    if (blue.Children.Contains(selected))
+                    {
+                        blue.Children.Remove(selected);
+
+                    }
+                    else if (pink.Children.Contains(selected))
+                    {
+                        pink.Children.Remove(selected);
+                    }
+                    gride.Children.Remove(selected);
+                    Canvass.Children.Add(selected);
+                }
                 DragDrop.DoDragDrop(selected, selected, DragDropEffects.Move);
             }
         }
@@ -50,7 +62,7 @@ namespace drag_and_drop
 
                     }
                 }
-                if (insertionIndex != -1)
+                if (insertionIndex == -1)
                 {
                     Canvass.Children.Remove(selected);
                     gride.Children.Add(selected);
@@ -71,12 +83,12 @@ namespace drag_and_drop
             if (initialMousePosition == default(Point))
             {
 
-                initialMousePosition = e.GetPosition(Canvass);
+                initialMousePosition = e.GetPosition(gride);
                 initialElementPosition = new Point(Canvas.GetLeft(selected), Canvas.GetTop(selected));
             }
             else
             {
-                Point currentMousePosition = e.GetPosition(Canvass);
+                Point currentMousePosition = e.GetPosition(gride);
                 double deltaX = currentMousePosition.X - initialMousePosition.X;
                 double deltaY = currentMousePosition.Y - initialMousePosition.Y;
 

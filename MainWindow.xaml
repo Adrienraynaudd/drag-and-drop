@@ -15,6 +15,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0"
+             Name="blue"
             Background="Blue"
              Drop="Panel_Drop"
             AllowDrop="True">
@@ -27,6 +28,7 @@
             Fill="red" />
             </StackPanel>
             <StackPanel Grid.Column="1"
+             Name="pink"
             Background="pink"
             AllowDrop="True"
             Drop="Panel_Drop">
