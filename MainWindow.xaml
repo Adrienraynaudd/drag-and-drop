@@ -5,6 +5,7 @@
     <Canvas Name="Canvass"
              Drop="Panel_Drop"
             AllowDrop="True"
+            Background="Black"
             HorizontalAlignment="Stretch" 
             VerticalAlignment="Stretch">
         <Grid Name="gride" 

@@ -80,10 +80,11 @@ namespace drag_and_drop
         }
         private void Panel_DragOver(object sender, DragEventArgs e)
         {
+            
             if (initialMousePosition == default(Point))
             {
 
-                initialMousePosition = e.GetPosition(gride);
+                initialMousePosition = e.GetPosition(Canvass);
                 initialElementPosition = new Point(Canvas.GetLeft(selected), Canvas.GetTop(selected));
             }
             else
