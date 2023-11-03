@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace drag_and_drop
@@ -14,7 +15,7 @@ namespace drag_and_drop
         private Point initialMousePosition;
         private Point initialElementPosition;
         private UIElement selected;
-
+        private int insertionIndex = -1;
         public MainWindow()
         {
             InitializeComponent();
@@ -68,7 +69,7 @@ namespace drag_and_drop
 
                 if (insertionColumn == -1)
                 {
-                    //si le drop est hors colonne
+                    // Si le drop est en dehors des colonnes
                     for (int i = 0; i < gride.ColumnDefinitions.Count; i++)
                     {
                         double columnCenter = gride.ColumnDefinitions[i].ActualWidth / 2;
@@ -91,19 +92,39 @@ namespace drag_and_drop
 
                     if (targetStackPanel != null)
                     {
-                        
+                        Point absolutePositionSelected = selected.PointToScreen(new Point(0, 0));
+                        Point relativePositionSelected = targetStackPanel.PointFromScreen(absolutePositionSelected);
+
+                        int insertionIndex = -1;
+
+                        for (int i = 0; i < targetStackPanel.Children.Count; i++)
+                        {
+                            UIElement child = targetStackPanel.Children[i];
+                            Point relativePositionChild = child.TransformToAncestor(targetStackPanel).Transform(new Point(0, 0));
+
+                            if (relativePositionSelected.Y < relativePositionChild.Y)
+                            {
+                                insertionIndex = i;
+                                break;
+                            }
+                        }
+
                         Canvass.Children.Remove(selected);
 
-                        
-                        targetStackPanel.Children.Add(selected);
-
-                        initialMousePosition = default(Point);
-                        initialElementPosition = default(Point);
-                        selected = null;
+                        if (insertionIndex == -1)
+                        {
+                            targetStackPanel.Children.Add(selected);
+                        }
+                        else
+                        {
+                            targetStackPanel.Children.Insert(insertionIndex, selected);
+                        }
                     }
+
                 }
             }
         }
+
 
 
         private void Panel_DragOver(object sender, DragEventArgs e)
