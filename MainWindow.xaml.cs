@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -36,7 +37,12 @@ namespace drag_and_drop
                     {
                         pink.Children.Remove(selected);
                     }
+                    Point mousePos = e.GetPosition(Canvass);
+                    double offsetX = 50; 
+                    double offsetY = 50;
                     gride.Children.Remove(selected);
+                    Canvas.SetLeft(selected, mousePos.X - offsetX);
+                    Canvas.SetTop(selected, mousePos.Y - offsetY);
                     Canvass.Children.Add(selected);
                 }
                 DragDrop.DoDragDrop(selected, selected, DragDropEffects.Move);
@@ -47,37 +53,59 @@ namespace drag_and_drop
             if (selected != null)
             {
                 Point dropPosition = e.GetPosition(gride);
-                int insertionIndex = -1;
-                for (int i = 0; i < gride.Children.Count; i++)
-                {
-                    var child = gride.Children[i] as UIElement;
-                    if (child != null)
-                    {
-                        Point position = child.TranslatePoint(new Point(0, 0), gride);
-                        if (position.Y + (child.RenderSize.Height / 2) > dropPosition.Y)
-                        {
-                            insertionIndex = i;
-                            break;
-                        }
+                int insertionColumn = -1;
+                double minDistance = double.MaxValue;
 
+                for (int i = 0; i < gride.ColumnDefinitions.Count; i++)
+                {
+                    if (dropPosition.X < gride.ColumnDefinitions[i].ActualWidth)
+                    {
+                        insertionColumn = i;
+                        break;
+                    }
+                    dropPosition.X -= gride.ColumnDefinitions[i].ActualWidth;
+                }
+
+                if (insertionColumn == -1)
+                {
+                    //si le drop est hors colonne
+                    for (int i = 0; i < gride.ColumnDefinitions.Count; i++)
+                    {
+                        double columnCenter = gride.ColumnDefinitions[i].ActualWidth / 2;
+                        double distance = Math.Abs(dropPosition.X - columnCenter);
+
+                        if (distance < minDistance)
+                        {
+                            minDistance = distance;
+                            insertionColumn = i;
+                        }
                     }
                 }
-                if (insertionIndex == -1)
-                {
-                    Canvass.Children.Remove(selected);
-                    gride.Children.Add(selected);
-                }
-                else
-                {
-                    Canvass.Children.Remove(selected);
-                    gride.Children.Insert(insertionIndex, selected);
-                }
-                initialMousePosition = default(Point);
-                initialElementPosition = default(Point);
-                selected = null;
-            }
 
+                if (insertionColumn != -1)
+                {
+                    StackPanel targetStackPanel = gride.Children
+                        .OfType<StackPanel>()
+                        .Where(sp => Grid.GetColumn(sp) == insertionColumn)
+                        .FirstOrDefault();
+
+                    if (targetStackPanel != null)
+                    {
+                        
+                        Canvass.Children.Remove(selected);
+
+                        
+                        targetStackPanel.Children.Add(selected);
+
+                        initialMousePosition = default(Point);
+                        initialElementPosition = default(Point);
+                        selected = null;
+                    }
+                }
+            }
         }
+
+
         private void Panel_DragOver(object sender, DragEventArgs e)
         {
             
