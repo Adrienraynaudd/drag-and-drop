@@ -125,11 +125,13 @@ namespace drag_and_drop
                         if (insertionIndex == -1)
                         {
                             targetStackPanel.Children.Add(draggedElement);
+                            draggedElement.Margin = new Thickness(initialMargin.Left, initialMargin.Top, initialMargin.Right, initialMargin.Bottom);
                         }
                         else
                         {
 
                             targetStackPanel.Children.Insert(insertionIndex, draggedElement);
+                            draggedElement.Margin = new Thickness(initialMargin.Left, initialMargin.Top, initialMargin.Right, initialMargin.Bottom);
                         }
                     }
                 }
