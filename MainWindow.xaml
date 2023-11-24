@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="drag_and_drop" Height="1000" Width="1000">
     <Grid>
-        <Grid HorizontalAlignment="Stretch"  Width="1000" Height="1000" VerticalAlignment="Stretch" AllowDrop="True">
+        <Grid Name="containerez" HorizontalAlignment="Stretch"  Width="1000" Height="1000" VerticalAlignment="Stretch" AllowDrop="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -19,8 +19,7 @@
             </StackPanel>
         </Grid>
 
-        <Grid Name="container" AllowDrop="True" DragOver="DragElement_DragOver">
-
+        <Grid Name="container" AllowDrop="True" DragOver="DragElement_DragOver" Drop="Container_Drop">
         </Grid>
     </Grid>
 </Window>

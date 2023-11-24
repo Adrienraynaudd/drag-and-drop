@@ -66,29 +66,29 @@ namespace drag_and_drop
         }
 
         private void Container_Drop(object sender, DragEventArgs e)
-        {/*
+        {
             if (draggedElement != null)
             {
-                Point dropPosition = e.GetPosition(container);
+                Point dropPosition = e.GetPosition(containerez);
                 int insertionColumn = -1;
                 double minDistance = double.MaxValue;
 
-                for (int i = 0; i < container.ColumnDefinitions.Count; i++)
+                for (int i = 0; i < containerez.ColumnDefinitions.Count; i++)
                 {
-                    if (dropPosition.X < container.ColumnDefinitions[i].ActualWidth)
+                    if (dropPosition.X < containerez.ColumnDefinitions[i].ActualWidth)
                     {
                         insertionColumn = i;
                         break;
                     }
-                    dropPosition.X -= container.ColumnDefinitions[i].ActualWidth;
+                    dropPosition.X -= containerez.ColumnDefinitions[i].ActualWidth;
                 }
 
                 if (insertionColumn == -1)
                 {
                     // Si le drop est en dehors des colonnes
-                    for (int i = 0; i < container.ColumnDefinitions.Count; i++)
+                    for (int i = 0; i < containerez.ColumnDefinitions.Count; i++)
                     {
-                        double columnCenter = container.ColumnDefinitions[i].ActualWidth / 2;
+                        double columnCenter = containerez.ColumnDefinitions[i].ActualWidth / 2;
                         double distance = Math.Abs(dropPosition.X - columnCenter);
 
                         if (distance < minDistance)
@@ -101,7 +101,7 @@ namespace drag_and_drop
 
                 if (insertionColumn != -1)
                 {
-                    StackPanel targetStackPanel = container.Children.OfType<StackPanel>().Where(sp => Grid.GetColumn(sp) == insertionColumn).FirstOrDefault();
+                    StackPanel targetStackPanel = containerez.Children.OfType<StackPanel>().Where(sp => Grid.GetColumn(sp) == insertionColumn).FirstOrDefault();
 
                     if (targetStackPanel != null)
                     {
@@ -136,7 +136,7 @@ namespace drag_and_drop
 
                 isDragging = false;
                 draggedElement = null;
-            }*/
+            }
         }
 
         private void DragElement_DragOver(object sender, DragEventArgs e)
@@ -148,9 +148,14 @@ namespace drag_and_drop
                 double newLeft = initialMargin.Left + currentMousePosition.X - initialMousePosition.X;
                 double newTop = initialMargin.Top + currentMousePosition.Y - initialMousePosition.Y;
 
+                // Ajustez le calcul de la nouvelle marge pour corriger le problème vers le bas
+                double maxTop = container.ActualHeight - draggedElement.ActualHeight;
+                newTop = Math.Max(0, Math.Min(newTop, maxTop));
+
                 draggedElement.Margin = new Thickness(newLeft, newTop, 0, 0);
             }
         }
+
     }
 
 }
