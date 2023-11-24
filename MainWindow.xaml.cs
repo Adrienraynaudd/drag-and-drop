@@ -53,7 +53,7 @@ namespace drag_and_drop
                     p.Children.Remove(draggedElement);
                     container.Children.Add(draggedElement);
 
-                    draggedElement.Margin = new Thickness(initialMargin.Left + e.GetPosition(container).X - initialElementOffset.X, initialMargin.Top + e.GetPosition(container).Y - initialElementOffset.Y, 0, 0);
+                    draggedElement.Margin = new Thickness(initialMargin.Left + e.GetPosition(containerez).X - initialMousePosition.X, initialMargin.Top + e.GetPosition(containerez).Y - initialMousePosition.Y, 0, 0);
 
                     UpdateLayout();
 
