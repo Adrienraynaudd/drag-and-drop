@@ -1,28 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Windows;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Shapes;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
+using System.Windows;
 
-namespace drag_and_drop
+/*namespace drag_and_drop
 {
     public partial class MainWindow : Window
     {
         private bool isDragging = false;
         private FrameworkElement? draggedElement;
         private Point initialElementOffset;
-        private HorizontalAlignment initialHAlign;
         private Thickness initialMargin;
+        private HorizontalAlignment initialHAlign;
         private VerticalAlignment initialVAlign;
         private Point initialMousePosition;
-        private Dictionary<FrameworkElement, Point> initialMousePositions = new Dictionary<FrameworkElement, Point>();
-        private Dictionary<FrameworkElement, Thickness> initialMargins = new Dictionary<FrameworkElement, Thickness>();
 
         public MainWindow()
         {
@@ -38,15 +33,10 @@ namespace drag_and_drop
                     isDragging = true;
                     draggedElement = fwelm;
 
-                    if (!initialMousePositions.ContainsKey(draggedElement))
-                    {
-                        initialMousePositions[draggedElement] = e.GetPosition(draggedElement);
-                        initialMargins[draggedElement] = draggedElement.Margin;
-                    }
-
-                    initialMousePosition = initialMousePositions[draggedElement];
-                    initialMargin = initialMargins[draggedElement];
-
+                    // Position du curseur au moment de la sélection par rapport au coin supérieur gauche de l'objet à dragger
+                    initialMousePosition = e.GetPosition(draggedElement);
+                    initialElementOffset = (Point)(e.GetPosition(container) - fwelm.TranslatePoint(new Point(0, 0), container));
+                    initialMargin = draggedElement.Margin;
                     initialHAlign = draggedElement.HorizontalAlignment;
                     initialVAlign = draggedElement.VerticalAlignment;
 
@@ -66,7 +56,7 @@ namespace drag_and_drop
         }
 
         private void Container_Drop(object sender, DragEventArgs e)
-        {/*
+        {
             if (draggedElement != null)
             {
                 Point dropPosition = e.GetPosition(container);
@@ -136,7 +126,7 @@ namespace drag_and_drop
 
                 isDragging = false;
                 draggedElement = null;
-            }*/
+            }
         }
 
         private void DragElement_DragOver(object sender, DragEventArgs e)
@@ -152,5 +142,5 @@ namespace drag_and_drop
             }
         }
     }
-
 }
+*/

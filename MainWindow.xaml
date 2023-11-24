@@ -2,56 +2,25 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="drag_and_drop" Height="1000" Width="1000">
-    <Canvas Name="Canvass"
-             Drop="Panel_Drop"
-            AllowDrop="True"
-            Background="Black"
-            HorizontalAlignment="Stretch" 
-            VerticalAlignment="Stretch">
-        <Grid Name="gride" 
-            HorizontalAlignment="Stretch"
-              Width="1000"
-              Height="1000"
-              VerticalAlignment="Stretch">
+    <Grid>
+        <Grid HorizontalAlignment="Stretch"  Width="1000" Height="1000" VerticalAlignment="Stretch" AllowDrop="True">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0"
-             Name="blue"
-            Background="Blue"
-             Drop="Panel_Drop"
-            AllowDrop="True">
-                <Ellipse  
-             DragOver="Panel_DragOver"
-            MouseMove="Panel_MouseMove"
-            Canvas.Left="50"
-            Canvas.Top="50"
-            Height="100" Width="100"
-            
-            Fill="black" />
+
+            <StackPanel Grid.Column="0" Name="blue" Background="Blue" Drop="Container_Drop">
+                <Ellipse MouseDown ="DragElement_MouseDown" Height="100" Width="100" Fill="black" AllowDrop="True" />
             </StackPanel>
-            <StackPanel Grid.Column="1"
-             Name="pink"
-            Background="pink"
-            AllowDrop="True"
-            Drop="Panel_Drop">
-                <Ellipse  
-                 DragOver="Panel_DragOver"
-                MouseMove="Panel_MouseMove"
-                Canvas.Left="50"
-                Canvas.Top="50"
-                Height="100" Width="100"
-                Fill="red" />
-                <Ellipse  
- DragOver="Panel_DragOver"
-MouseMove="Panel_MouseMove"
-Canvas.Left="50"
-Canvas.Top="50"
-Height="100" Width="100"
-Fill="red" />
+
+            <StackPanel Grid.Column="1" Name="pink" Background="pink" Drop="Container_Drop">
+                <Ellipse MouseDown ="DragElement_MouseDown" Height="100" Width="100" Fill="red" AllowDrop="True" />
+                <Ellipse MouseDown ="DragElement_MouseDown" Height="100" Width="100" Fill="red" AllowDrop="True" />
             </StackPanel>
         </Grid>
-    </Canvas>
 
+        <Grid Name="container" AllowDrop="True" DragOver="DragElement_DragOver">
+
+        </Grid>
+    </Grid>
 </Window>
