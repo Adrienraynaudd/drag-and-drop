@@ -145,7 +145,7 @@ namespace drag_and_drop
                             UIElement child = targetStackPanel.Children[i];
                             Point relativePositionChild = child.TransformToAncestor(targetStackPanel).Transform(new Point(0, 0));
 
-                            if (relativePositionSelected.Y < relativePositionChild.Y)
+                            if (relativePositionSelected.Y <= relativePositionChild.Y)
                             {
                                 insertionIndex = i;
                                 break;
@@ -192,63 +192,61 @@ namespace drag_and_drop
                 newTop = Math.Max(0, Math.Min(newTop, maxTop));
 
                 draggedElement.Margin = new Thickness(newLeft, newTop, 0, 0);
+                CopyDragOver(e);
+            }
+        }
+        private void CopyDragOver(DragEventArgs e)
+        {
+            Point CopyDropPosition = e.GetPosition(containerez);
+            int insertionColumn = -1;
+            double minDistance = double.MaxValue;
 
-
-                int insertionColumn = -1;
-                double minDistance = double.MaxValue;
-
-                for (int i = 0; i < containerez.ColumnDefinitions.Count; i++)
+            for (int i = 0; i < containerez.ColumnDefinitions.Count; i++)
+            {
+                if (CopyDropPosition.X < containerez.ColumnDefinitions[i].ActualWidth)
                 {
-                    if (currentMousePosition.X < containerez.ColumnDefinitions[i].ActualWidth)
+                    insertionColumn = i;
+
+                    break;
+                }
+                CopyDropPosition.X -= containerez.ColumnDefinitions[i].ActualWidth;
+            }
+            if (insertionColumn != -1)
+            {
+                StackPanel targetStackPanel = containerez.Children.OfType<StackPanel>().Where(sp => Grid.GetColumn(sp) == insertionColumn).FirstOrDefault();
+                if (targetStackPanel != null)
+                {
+                    Point absolutePositionSelected = draggedElement.PointToScreen(new Point(0, 0));
+                    Point relativePositionSelected = targetStackPanel.PointFromScreen(absolutePositionSelected);
+                    int insertionIndex = -1;
+
+                    for (int i = 0; i < targetStackPanel.Children.Count; i++)
                     {
-                        insertionColumn = i;
-                        break;
+                        UIElement child = targetStackPanel.Children[i];
+                        Point relativePositionChild = child.TransformToAncestor(targetStackPanel).Transform(new Point(0, 0));
+
+                        if (relativePositionSelected.Y <= relativePositionChild.Y)
+                        {
+                            insertionIndex = i;
+                            break;
+                        }
                     }
-                    currentMousePosition.X -= containerez.ColumnDefinitions[i].ActualWidth;
-                }
+                    PanelCopy.Remove(draggedCopy);
 
-                if (insertionColumn == -1)
-                {
-                    // Si le drop est en dehors des colonnes
-                }
-                if (insertionColumn != -1)
-                {
-                    StackPanel targetStackPanel = containerez.Children.OfType<StackPanel>().Where(sp => Grid.GetColumn(sp) == insertionColumn).FirstOrDefault();
-
-                    if (targetStackPanel != null)
+                    if (insertionIndex == -1)
                     {
-                        Point absolutePositionSelected = draggedElement.PointToScreen(new Point(0, 0));
-                        Point relativePositionSelected = targetStackPanel.PointFromScreen(absolutePositionSelected);
-                        int insertionIndex = -1;
+                        targetStackPanel.Children.Add(draggedCopy);
+                        PanelCopy = targetStackPanel.Children;
+                        int currentColumn = Grid.GetColumn(draggedCopy);
+                        currentColumnDefinition = containerez.ColumnDefinitions[currentColumn];
+                    }
+                    else
+                    {
 
-                        for (int i = 0; i < targetStackPanel.Children.Count; i++)
-                        {
-                            UIElement child = targetStackPanel.Children[i];
-                            Point relativePositionChild = child.TransformToAncestor(targetStackPanel).Transform(new Point(0, 0));
-
-                            if (relativePositionSelected.Y < relativePositionChild.Y)
-                            {
-                                insertionIndex = i;
-                                break;
-                            }
-                        }
-                        PanelCopy.Remove(draggedCopy);
-
-                        if (insertionIndex == -1)
-                        {
-                            targetStackPanel.Children.Add(draggedCopy);
-                            PanelCopy = targetStackPanel.Children;
-                            int currentColumn = Grid.GetColumn(draggedCopy);
-                            currentColumnDefinition = containerez.ColumnDefinitions[currentColumn];
-                        }
-                        else
-                        {
-
-                            targetStackPanel.Children.Insert(insertionIndex, draggedCopy);
-                            PanelCopy = targetStackPanel.Children;
-                            int currentColumn = Grid.GetColumn(draggedCopy);
-                            currentColumnDefinition = containerez.ColumnDefinitions[currentColumn];
-                        }
+                        targetStackPanel.Children.Insert(insertionIndex, draggedCopy);
+                        PanelCopy = targetStackPanel.Children;
+                        int currentColumn = Grid.GetColumn(draggedCopy);
+                        currentColumnDefinition = containerez.ColumnDefinitions[currentColumn];
                     }
                 }
             }
