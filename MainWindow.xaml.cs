@@ -20,8 +20,6 @@ namespace drag_and_drop
         private Thickness initialMargin;
         private VerticalAlignment initialVAlign;
         private Point initialMousePosition;
-        private Dictionary<FrameworkElement, Point> initialMousePositions = new Dictionary<FrameworkElement, Point>();
-        private Dictionary<FrameworkElement, Thickness> initialMargins = new Dictionary<FrameworkElement, Thickness>();
         private double columnCenter;
         private ColumnDefinition currentColumnDefinition;
         private FrameworkElement draggedCopy;
@@ -41,16 +39,10 @@ namespace drag_and_drop
                     isDragging = true;
                     draggedElement = fwelm;
 
-                    if (!initialMousePositions.ContainsKey(draggedElement))
-                    {
-                        initialMousePositions[draggedElement] = e.GetPosition(draggedElement);
-                        initialMargins[draggedElement] = draggedElement.Margin;
-                    }
+                    draggedCopy = CreateDraggedCopy(draggedElement);
 
-                     draggedCopy = CreateDraggedCopy(draggedElement);
-
-                    initialMousePosition = initialMousePositions[draggedElement];
-                    initialMargin = initialMargins[draggedElement];
+                    initialMousePosition.X = fwelm.ActualWidth / 2;
+                    initialMousePosition.Y = fwelm.ActualHeight / 2;
 
                     p.Children.Add(draggedCopy);
 
@@ -78,22 +70,18 @@ namespace drag_and_drop
             }
         }
 
-        private FrameworkElement CreateDraggedCopy(FrameworkElement original)
+        private Border CreateDraggedCopy(FrameworkElement original)
         {
-            
-            FrameworkElement copy = Activator.CreateInstance(original.GetType()) as FrameworkElement;
-
-            
-            copy.Width = original.ActualWidth;
-            copy.Height = original.ActualHeight;
-            copy.AllowDrop = original.AllowDrop;
-            copy.Margin = original.Margin;
-            if (original is Shape originalShape && copy is Shape copyShape)
+            Border ghost = new Border
             {
-                copyShape.Fill = originalShape.Fill;
-            }
+                Background = new BitmapCacheBrush(original),
+                Width = original.ActualWidth,
+                Height = original.ActualHeight,
+                AllowDrop = original.AllowDrop,
+                Margin = original.Margin
+            };
 
-            return copy;
+            return ghost;
         }
 
         private void Container_Drop(object sender, DragEventArgs e)
@@ -111,6 +99,7 @@ namespace drag_and_drop
                         insertionColumn = i;
                         break;
                     }
+
                     dropPosition.X -= containerez.ColumnDefinitions[i].ActualWidth;
                 }
 
@@ -154,7 +143,6 @@ namespace drag_and_drop
                         container.Children.Remove(draggedElement);
                         PanelCopy.Remove(draggedCopy);
                         
-
                         if (insertionIndex == -1)
                         {
                             targetStackPanel.Children.Add(draggedElement);
@@ -163,7 +151,6 @@ namespace drag_and_drop
                         }
                         else
                         {
-
                             targetStackPanel.Children.Insert(insertionIndex, draggedElement);
                             int currentColumn = Grid.GetColumn(draggedElement);
                             currentColumnDefinition = containerez.ColumnDefinitions[currentColumn];
@@ -211,6 +198,7 @@ namespace drag_and_drop
                 }
                 CopyDropPosition.X -= containerez.ColumnDefinitions[i].ActualWidth;
             }
+            
             if (insertionColumn != -1)
             {
                 StackPanel targetStackPanel = containerez.Children.OfType<StackPanel>().Where(sp => Grid.GetColumn(sp) == insertionColumn).FirstOrDefault();
@@ -251,7 +239,14 @@ namespace drag_and_drop
                 }
             }
         }
-
+        private int compare(Panel _panel, FrameworkElement _elm1, FrameworkElement _elm2)
+        {
+            /*if (_panel.LogicalOrientationPublic == Orientation.Horizontal)
+            {
+                if (_elm1.)
+            }*/
+            return 0;
+        }
     }
 
 }

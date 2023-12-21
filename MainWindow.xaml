@@ -7,16 +7,25 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Name="blue" Background="Blue" Drop="Container_Drop">
-                <Ellipse MouseDown ="DragElement_MouseDown" Height="100" Width="100" Fill="black" AllowDrop="True" />
+                <Ellipse MouseDown ="DragElement_MouseDown" Height="100" Width="50" Fill="black" AllowDrop="True" />
             </StackPanel>
 
             <StackPanel Grid.Column="1" Name="pink" Background="pink" Drop="Container_Drop">
                 <Ellipse MouseDown ="DragElement_MouseDown" Height="100" Width="100" Fill="red" AllowDrop="True" />
                 <Ellipse MouseDown ="DragElement_MouseDown" Height="100" Width="100" Fill="red" AllowDrop="True" />
+                <Border MouseDown ="DragElement_MouseDown" Height="100" Width="100" AllowDrop="True" BorderThickness="3" BorderBrush="AliceBlue">
+                    <TextBlock>enculer</TextBlock>
+                </Border>
             </StackPanel>
+
+            <WrapPanel Grid.Column="2" Name="wpOrange" Background="DarkOrange" Drop="Container_Drop" Orientation="Vertical" Width="333" Height="800" VerticalAlignment="Top">
+                <Ellipse MouseDown ="DragElement_MouseDown" Height="100" Width="100" Fill="DarkCyan" AllowDrop="True" />
+                <Ellipse MouseDown ="DragElement_MouseDown" Height="100" Width="100" Fill="DarkGreen" AllowDrop="True" />
+            </WrapPanel>
         </Grid>
 
         <Grid Name="container" AllowDrop="True" DragOver="DragElement_DragOver" Drop="Container_Drop">
