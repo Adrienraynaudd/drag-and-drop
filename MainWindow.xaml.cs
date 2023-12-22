@@ -25,7 +25,6 @@ namespace drag_and_drop
         private ColumnDefinition currentColumnDefinition;
         private FrameworkElement draggedCopy;
         private UIElementCollection PanelCopy;
-        private Dictionary<FrameworkElement, Thickness> initialMargins = new Dictionary<FrameworkElement, Thickness>();
         public MainWindow()
         {
             InitializeComponent();
@@ -122,20 +121,21 @@ namespace drag_and_drop
 
                 if (insertionColumn != -1)
                 {
-                    StackPanel targetStackPanel = containerez.Children.OfType<StackPanel>().Where(sp => Grid.GetColumn(sp) == insertionColumn).FirstOrDefault();
+                    Panel targetPanel = containerez.Children.OfType<Panel>().Where(sp => Grid.GetColumn(sp) == insertionColumn).FirstOrDefault();
+                    
 
-                    if (targetStackPanel != null)
+                    if (targetPanel != null)
                     {
                         Point absolutePositionSelected = draggedElement.PointToScreen(new Point(0, 0));
-                        Point relativePositionSelected = targetStackPanel.PointFromScreen(absolutePositionSelected);
+                        Point relativePositionSelected = targetPanel.PointFromScreen(absolutePositionSelected);
                         int insertionIndex = -1;
                         columnCenterY = containerez.ActualHeight / 2;
-                        if (targetStackPanel.Orientation == Orientation.Vertical)
+                        if (targetPanel is StackPanel stackpanelV && stackpanelV.Orientation == Orientation.Vertical)
                         {
-                            for (int i = 0; i < targetStackPanel.Children.Count; i++)
+                            for (int i = 0; i < targetPanel.Children.Count; i++)
                             {
-                                UIElement child = targetStackPanel.Children[i];
-                                Point relativePositionChild = child.TransformToAncestor(targetStackPanel).Transform(new Point(0, 0));
+                                UIElement child = targetPanel.Children[i];
+                                Point relativePositionChild = child.TransformToAncestor(targetPanel).Transform(new Point(0, 0));
 
                                 if (relativePositionSelected.Y <= relativePositionChild.Y)
                                 {
@@ -144,12 +144,12 @@ namespace drag_and_drop
                                 }
                             }
                         }
-                        else if (targetStackPanel.Orientation == Orientation.Horizontal)
+                        else if (targetPanel is StackPanel stackpanelH && stackpanelH.Orientation == Orientation.Horizontal)
                         {
-                            for (int i = 0; i < targetStackPanel.Children.Count; i++)
+                            for (int i = 0; i < targetPanel.Children.Count; i++)
                             {
-                                UIElement child = targetStackPanel.Children[i];
-                                Point relativePositionChild = child.TransformToAncestor(targetStackPanel).Transform(new Point(0, 0));
+                                UIElement child = targetPanel.Children[i];
+                                Point relativePositionChild = child.TransformToAncestor(targetPanel).Transform(new Point(0, 0));
 
                                 if (relativePositionSelected.X <= relativePositionChild.X)
                                 {
@@ -164,22 +164,22 @@ namespace drag_and_drop
 
                         if (insertionIndex == -1)
                         {
-                            targetStackPanel.Children.Add(draggedElement);
+                            targetPanel.Children.Add(draggedElement);
                             int currentColumn = Grid.GetColumn(draggedElement);
                             currentColumnDefinition = containerez.ColumnDefinitions[currentColumn];
                         }
                         else
                         {
-                            targetStackPanel.Children.Insert(insertionIndex, draggedElement);
+                            targetPanel.Children.Insert(insertionIndex, draggedElement);
                             int currentColumn = Grid.GetColumn(draggedElement);
                             currentColumnDefinition = containerez.ColumnDefinitions[currentColumn];
                         }
                         columnCenterX = currentColumnDefinition.ActualWidth / 2;
-                        if (targetStackPanel.Orientation == Orientation.Vertical)
+                        if (targetPanel is StackPanel stackpanelColV && stackpanelColV.Orientation == Orientation.Vertical)
                         {
                             draggedElement.Margin = new Thickness(initialMargin.Left + (columnCenterX - (draggedElement.Width / 2)), initialMargin.Top, initialMargin.Right, initialMargin.Bottom);
                         }
-                        else if (targetStackPanel.Orientation == Orientation.Horizontal)
+                        else if (targetPanel is StackPanel stackpanelColH && stackpanelColH.Orientation == Orientation.Horizontal)
                         {
                             double newY = initialMargin.Top + (columnCenterY - (draggedElement.Height / 2));
 
