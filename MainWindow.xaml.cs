@@ -28,8 +28,19 @@ namespace drag_and_drop
         public MainWindow()
         {
             InitializeComponent();
+            DragLeave += MainWindow_DragLeave;
         }
 
+        private void MainWindow_DragLeave(object sender, DragEventArgs e)
+        {
+            Point mousePosition = e.GetPosition(this);
+            if (mousePosition.X < 0 || mousePosition.Y < 0 || mousePosition.X >= ActualWidth || mousePosition.Y >= ActualHeight)
+            {
+
+                Debug.WriteLine("DragLeave");
+                Container_Drop(sender, e);
+            }
+        }
         private void DragElement_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (sender is FrameworkElement fwelm)
@@ -38,8 +49,6 @@ namespace drag_and_drop
                 {
                     isDragging = true;
                     draggedElement = fwelm;
-
-
                     draggedCopy = CreateDraggedCopy(draggedElement);
                     initialMousePosition.X = fwelm.ActualWidth / 2;
                     initialMousePosition.Y = fwelm.ActualHeight / 2;
@@ -157,6 +166,9 @@ namespace drag_and_drop
                                     break;
                                 }
                             }
+                        }else if(targetPanel is WrapPanel wrapPanelV && wrapPanelV.Orientation == Orientation.Vertical)
+                        {
+                            
                         }
 
                         container.Children.Remove(draggedElement);
@@ -188,7 +200,7 @@ namespace drag_and_drop
 
                             draggedElement.Margin = new Thickness(initialMargin.Left, newY, initialMargin.Right, initialMargin.Bottom);
                         }
-
+                        
                     }
                 }
 
