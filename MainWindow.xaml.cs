@@ -65,7 +65,6 @@ namespace drag_and_drop
                     p.Children.Remove(draggedElement);
                     PanelCopy = p.Children;
                     container.Children.Add(draggedElement);
-                    Debug.WriteLine(draggedCopy.Margin.ToString());
                     draggedElement.Margin = new Thickness(initialMargin.Left + e.GetPosition(container).X - initialMousePosition.X, initialMargin.Top + e.GetPosition(container).Y - initialMousePosition.Y, 0, 0);
                     UpdateLayout();
 
@@ -166,9 +165,25 @@ namespace drag_and_drop
                                     break;
                                 }
                             }
-                        }else if(targetPanel is WrapPanel wrapPanelV && wrapPanelV.Orientation == Orientation.Vertical)
+                        }else if(targetPanel is WrapPanel wrapPanelV)
                         {
-                            
+                            for (int i = 0; i < targetPanel.Children.Count; i++)
+                            {
+                                UIElement child = targetPanel.Children[i];
+                                Point relativePositionChild = child.TransformToAncestor(targetPanel).Transform(new Point(0, 0));
+                                if (wrapPanelV.Orientation == Orientation.Vertical)
+                                {
+                                    if (relativePositionSelected.Y <= relativePositionChild.Y)
+                                    {
+                                        if (relativePositionSelected.X < relativePositionChild.X)
+                                        {
+                                            insertionIndex = i;
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                            }
                         }
 
                         container.Children.Remove(draggedElement);
@@ -200,7 +215,11 @@ namespace drag_and_drop
 
                             draggedElement.Margin = new Thickness(initialMargin.Left, newY, initialMargin.Right, initialMargin.Bottom);
                         }
-                        
+                        else if (targetPanel is WrapPanel wrapPanelColV && wrapPanelColV.Orientation == Orientation.Vertical)
+                        {
+                            draggedElement.Margin = new Thickness(0);
+                        }
+
                     }
                 }
 
@@ -244,18 +263,18 @@ namespace drag_and_drop
 
             if (insertionColumn != -1)
             {
-                StackPanel targetStackPanel = containerez.Children.OfType<StackPanel>().Where(sp => Grid.GetColumn(sp) == insertionColumn).FirstOrDefault();
-                if (targetStackPanel != null)
+                Panel targetPanel = containerez.Children.OfType<Panel>().Where(sp => Grid.GetColumn(sp) == insertionColumn).FirstOrDefault();
+                if (targetPanel != null)
                 {
                     Point absolutePositionSelected = draggedElement.PointToScreen(new Point(0, 0));
-                    Point relativePositionSelected = targetStackPanel.PointFromScreen(absolutePositionSelected);
+                    Point relativePositionSelected = targetPanel.PointFromScreen(absolutePositionSelected);
                     int insertionIndex = -1;
-                    if (targetStackPanel.Orientation == Orientation.Vertical)
+                    if (targetPanel is StackPanel stackpanelColV && stackpanelColV.Orientation == Orientation.Vertical)
                     {
-                        for (int i = 0; i < targetStackPanel.Children.Count; i++)
+                        for (int i = 0; i < targetPanel.Children.Count; i++)
                         {
-                            UIElement child = targetStackPanel.Children[i];
-                            Point relativePositionChild = child.TransformToAncestor(targetStackPanel).Transform(new Point(0, 0));
+                            UIElement child = targetPanel.Children[i];
+                            Point relativePositionChild = child.TransformToAncestor(targetPanel).Transform(new Point(0, 0));
 
                             if (relativePositionSelected.Y <= relativePositionChild.Y)
                             {
@@ -271,12 +290,12 @@ namespace drag_and_drop
                             draggedCopy.Margin = new Thickness(initialMargin.Left + (columnCenterX - (draggedCopy.Width / 2)), initialMargin.Top, initialMargin.Right, initialMargin.Bottom);
                         }
                     }
-                    else if (targetStackPanel.Orientation == Orientation.Horizontal)
+                    else if (targetPanel is StackPanel stackpanelH && stackpanelH.Orientation == Orientation.Horizontal)
                     {
-                        for (int i = 0; i < targetStackPanel.Children.Count; i++)
+                        for (int i = 0; i < targetPanel.Children.Count; i++)
                         {
-                            UIElement child = targetStackPanel.Children[i];
-                            Point relativePositionChild = child.TransformToAncestor(targetStackPanel).Transform(new Point(0, 0));
+                            UIElement child = targetPanel.Children[i];
+                            Point relativePositionChild = child.TransformToAncestor(targetPanel).Transform(new Point(0, 0));
 
                             if (relativePositionSelected.X <= relativePositionChild.X)
                             {
@@ -293,19 +312,39 @@ namespace drag_and_drop
                             draggedCopy.Margin = new Thickness(initialMargin.Left, newY, initialMargin.Right, initialMargin.Bottom);
                         }
                     }
+                    else if (targetPanel is WrapPanel wrapPanelV)
+                    {
+                        for (int i = 0; i < targetPanel.Children.Count; i++)
+                        {
+                            UIElement child = targetPanel.Children[i];
+                            Point relativePositionChild = child.TransformToAncestor(targetPanel).Transform(new Point(0, 0));
+                            if (wrapPanelV.Orientation == Orientation.Vertical)
+                            {
+                                if (relativePositionSelected.Y <= relativePositionChild.Y)
+                                {
+                                    if (relativePositionSelected.X < relativePositionChild.X)
+                                    {
+                                        insertionIndex = i;
+                                        break;
+                                    }
+                                }
+                            }
+
+                        }
+                    }
 
 
                     PanelCopy.Remove(draggedCopy);
 
                     if (insertionIndex == -1)
                     {
-                        targetStackPanel.Children.Add(draggedCopy);
-                        PanelCopy = targetStackPanel.Children;
+                        targetPanel.Children.Add(draggedCopy);
+                        PanelCopy = targetPanel.Children;
                     }
                     else
                     {
-                        targetStackPanel.Children.Insert(insertionIndex, draggedCopy);
-                        PanelCopy = targetStackPanel.Children;
+                        targetPanel.Children.Insert(insertionIndex, draggedCopy);
+                        PanelCopy = targetPanel.Children;
                     }
                 }
             }
