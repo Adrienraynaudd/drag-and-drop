@@ -182,6 +182,17 @@ namespace drag_and_drop
                                         }
                                     }
                                 }
+                                else
+                                {
+                                    if (relativePositionSelected.X <= relativePositionChild.X)
+                                    {
+                                        if (relativePositionSelected.Y <= relativePositionChild.Y)
+                                        {
+                                            insertionIndex = i;
+                                            break;
+                                        }
+                                    }
+                                }
                                 
                             }
                         }
@@ -216,6 +227,10 @@ namespace drag_and_drop
                             draggedElement.Margin = new Thickness(initialMargin.Left, newY, initialMargin.Right, initialMargin.Bottom);
                         }
                         else if (targetPanel is WrapPanel wrapPanelColV && wrapPanelColV.Orientation == Orientation.Vertical)
+                        {
+                            draggedElement.Margin = new Thickness(0);
+                        }
+                        else if (targetPanel is WrapPanel wrapPanelColH && wrapPanelColH.Orientation == Orientation.Horizontal)
                         {
                             draggedElement.Margin = new Thickness(0);
                         }
@@ -323,6 +338,17 @@ namespace drag_and_drop
                                 if (relativePositionSelected.Y <= relativePositionChild.Y)
                                 {
                                     if (relativePositionSelected.X < relativePositionChild.X)
+                                    {
+                                        insertionIndex = i;
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (relativePositionSelected.X <= relativePositionChild.X)
+                                {
+                                    if (relativePositionSelected.Y <= relativePositionChild.Y)
                                     {
                                         insertionIndex = i;
                                         break;
